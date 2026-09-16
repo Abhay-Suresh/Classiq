@@ -1,0 +1,48 @@
+{
+  "constraints": {
+    "max_width": 18,
+    "optimization_parameter": "depth"
+  },
+  "preferences": {
+    "compatibility_mode": false,
+    "custom_hardware_settings": {
+      "basis_gates": [
+        "cx",
+        "h",
+        "sdg",
+        "u3",
+        "sx",
+        "t",
+        "tdg",
+        "z",
+        "cy",
+        "sxdg",
+        "x",
+        "cz",
+        "u2",
+        "rz",
+        "rx",
+        "r",
+        "ry",
+        "u1",
+        "s",
+        "id",
+        "p",
+        "y",
+        "u"
+      ],
+      "is_symmetric_connectivity": true
+    },
+    "debug_mode": true,
+    "machine_precision": 8,
+    "optimization_level": 1,
+    "output_format": [
+      "qasm"
+    ],
+    "random_seed": 941078926,
+    "standalone": false,
+    "symbolic_loops": false,
+    "timeout_seconds": 300,
+    "transpilation_option": "auto optimize"
+  }
+}
