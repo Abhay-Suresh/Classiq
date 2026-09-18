@@ -23,16 +23,10 @@ qperm logo_phase_oracle(const x: qnum, const y: qnum) {
   control (((y >= 24) & (y <= 25)) & ((x >= 34) & (x <= 46))) {
     phase (pi);
   }
-  control ((y == 12) & ((x >= 36) & (x <= 44))) {
+  control (((x >= 36) & (x <= 44)) & ((y == 12) | (y == 26))) {
     phase (pi);
   }
-  control ((y == 26) & ((x >= 36) & (x <= 44))) {
-    phase (pi);
-  }
-  control ((y == 11) & ((x >= 38) & (x <= 42))) {
-    phase (pi);
-  }
-  control ((y == 27) & ((x >= 38) & (x <= 42))) {
+  control (((x >= 38) & (x <= 42)) & ((y == 11) | (y == 27))) {
     phase (pi);
   }
   control (((y >= 37) & (y <= 38)) & ((x >= 50) & (x <= 60))) {
@@ -41,16 +35,10 @@ qperm logo_phase_oracle(const x: qnum, const y: qnum) {
   control (((y >= 44) & (y <= 45)) & ((x >= 50) & (x <= 60))) {
     phase (pi);
   }
-  control ((y == 36) & ((x >= 51) & (x <= 59))) {
+  control (((x >= 51) & (x <= 59)) & ((y == 36) | (y == 46))) {
     phase (pi);
   }
-  control ((y == 46) & ((x >= 51) & (x <= 59))) {
-    phase (pi);
-  }
-  control ((y == 35) & ((x >= 53) & (x <= 57))) {
-    phase (pi);
-  }
-  control ((y == 47) & ((x >= 53) & (x <= 57))) {
+  control (((x >= 53) & (x <= 57)) & ((y == 35) | (y == 47))) {
     phase (pi);
   }
 }
