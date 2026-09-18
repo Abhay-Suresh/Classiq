@@ -1,3 +1,0 @@
-classiq
-numpy
-matplotlib
