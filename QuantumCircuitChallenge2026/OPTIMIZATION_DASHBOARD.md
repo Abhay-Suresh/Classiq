@@ -1,6 +1,6 @@
 # Optimization Dashboard
 
-**Current Best:** Depth 3,792 | CX 2,530
+**Current Best:** Depth 3,749 | CX 2,519
 
 ## Complete Optimization History
 
@@ -15,37 +15,17 @@
 | 6 | 10-Control Hybrid | 3,992 | 2,645 | +320 | ✅ Verified |
 | 7 | S-First Ordering | 3,960 | 2,644 | +32 | ✅ Verified |
 | 8 | D₂ X-Consolidation | 3,820 | 2,518 | +140 | ✅ Verified |
-| **9** | **D₂ Interleaved Edges** | **3,792** | **2,530** | **+28** | **✅ FINAL** |
+| 9 | D₂ Interleaved Edges | 3,792 | 2,530 | +28 | ✅ Verified |
+| 10 | pytket Post-Processing | 3,779 | 2,530 | +13 | ✅ Verified |
+| **11** | **Reverse D₂ Ordering + pytket** | **3,749** | **2,519** | **+30** | **✅ FINAL** |
 
-**Total improvement:** 1,537 depth points (28.84% reduction from baseline)
+**Total improvement:** 1,580 depth points (29.65% reduction from baseline)
 
 ## Key Insights
 
 1. **Control consolidation:** Combining symmetric controls with bitwise OR (`(x==33)|(x==47)`) was the single most effective technique (+140 depth in one step)
-
 2. **Control ordering:** Largest regions first improves synthesis (+32 depth)
-
 3. **Control interleaving:** Balancing phase control density across regions (+28 depth)
-
 4. **INTENSIVE transpilation:** Essential for all optimizations (+327 depth improvement alone)
-
 5. **Region merging:** Merging Bar+D1 core eliminated redundancy (+320 depth)
-
-## Approaches Tested (No Improvement)
-
-- XOR/ESOP decomposition: Regressed to 4,455 depth
-- Shared predicate tree: No gain (4,312)
-- Direct U3/CX basis: No gain (3,992)
-- Nested-first ordering: Regressed to 4,006 depth
-- Boolean cube decomp: No gain (3,992)
-- Width sweep (16-17): Massive regression
-- Global Y-symmetry: Requires 41 qubits (failed)
-- Distance-based disks: Requires 39 qubits (failed)
-- D1 shell consolidation: Requires 19 qubits or invalid predicates (failed)
-- Post-synthesis Qiskit: Import error (failed)
-
-## Methodology
-
-- **Synthesis:** `OptimizationParameter.DEPTH`, `max_width=18`
-- **Transpilation:** `TranspilationOption.INTENSIVE`, `basis_gates=['u3', 'cx']`
-- **Verification:** 3 random product-phase superpositions, max error < 1e-10
+6. **Reverse D2 ordering + pytket:** Optimizes gate density and schedule (+43 depth total)

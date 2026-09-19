@@ -8,17 +8,16 @@
 ## Final Verified Results
 
 ### Circuit Metrics
-- **Depth:** 3,792
-- **CX Count:** 2,530
+- **Depth:** 3,749
+- **CX Count:** 2,519
 - **Width:** 18 qubits (12 coordinates + 6 ancillas)
 - **Basis Gates:** u3, cx only
 
 ### Verification Status
 ✅ **PASSED** - All correctness checks verified
-- Max error: 2.34 × 10⁻¹⁶
-- Ancilla error: 5.80 × 10⁻¹⁷
-- Normalization error: 1.90 × 10⁻¹⁴
-- Random test states: 3 superpositions
+- Max error: 4.97 × 10⁻¹⁶
+- Ancilla error: 2.07 × 10⁻¹⁶
+- Normalization error: 4.44 × 10⁻¹⁶
 - All 1,097 black pixels correctly marked with -1 phase
 - All 2,999 white pixels correctly left unchanged
 
@@ -31,50 +30,18 @@
 - **CX Count:** 3,502
 - **Strategy:** 18 independent rectangle checks
 
-### Optimization 1: X-Predicate Sharing + Control Reordering
-- **Depth:** 5,234 (-95 from baseline)
-- **CX Count:** 3,492
-- **Strategy:** Pre-compute 9 shared X-interval predicates
-
-### Optimization 2: Y-Value Consolidation
-- **Depth:** 4,959 (-370 from baseline)
-- **CX Count:** 3,312
-- **Strategy:** Combine symmetric rows using bitwise OR: `(y == 12) | (y == 26)`
-
-### Optimization 3: INTENSIVE Transpilation
-- **Depth:** 4,632 (-697 from baseline, 13.08%)
-- **CX Count:** 3,126
-- **Strategy:** Use `TranspilationOption.INTENSIVE` instead of `AUTO_OPTIMIZE`
-
-### Optimization 4: S-Complete Repartitioning
-- **Depth:** 4,361 (-968 from baseline, 18.16%)
-- **CX Count:** 2,917
-- **Strategy:** Keep Square S as one complete rectangle (y=29..53)
-
-### Optimization 5: D₂ Merged-Pairs Symmetry
-- **Depth:** 4,312 (-1,017 from baseline)
-- **CX Count:** 2,888
-- **Strategy:** Core rectangle plus symmetric edge columns
-
-### Optimization 6: 10-Control Hybrid (Merge Bar + D1 Core)
-- **Depth:** 3,992 (-1,337 from baseline)
-- **CX Count:** 2,645
-- **Strategy:** Merge Bar and D1 core into single control at x=27..61, y=39..43
-
-### Optimization 7: S-First Control Ordering
-- **Depth:** 3,960 (-1,369 from baseline, 25.69%)
-- **CX Count:** 2,644
-- **Strategy:** Reorder controls from largest region to smallest
-
-### Optimization 8: D₂ X-Consolidation
-- **Depth:** 3,820 (-1,509 from baseline, 28.32%)
-- **CX Count:** 2,518
-- **Strategy:** Consolidate symmetric D2 edges: `((x == 33) | (x == 47))` and `((x == 32) | (x == 48))`
-
-### Optimization 9: D₂ Interleaved Edges ⭐ FINAL
-- **Depth:** 3,792 (-1,537 from baseline, **28.84%**)
-- **CX Count:** 2,530
-- **Strategy:** Interleave D2 edge controls to balance phase control density
+### Optimization Highlights
+1. **X-Predicate Sharing + Control Reordering:** Depth 5,234 (-95)
+2. **Y-Value Consolidation:** Depth 4,959 (-370)
+3. **INTENSIVE Transpilation:** Depth 4,632 (-697)
+4. **S-Complete Repartitioning:** Depth 4,361 (-968)
+5. **D₂ Merged-Pairs Symmetry:** Depth 4,312 (-1,017)
+6. **10-Control Hybrid:** Depth 3,992 (-1,337)
+7. **S-First Control Ordering:** Depth 3,960 (-1,369)
+8. **D₂ X-Consolidation:** Depth 3,820 (-1,509)
+9. **D₂ Interleaved Edges:** Depth 3,792 (-1,537)
+10. **pytket Post-Processing:** Depth 3,779 (-1,550)
+11. **Reverse D₂ Ordering + pytket:** **Depth 3,749 (-1,580, 29.65% reduction)**, CX 2,519
 
 ---
 
@@ -99,48 +66,12 @@ def oracle_d2_edges_middle(x: Const[QNum], y: Const[QNum]) -> None:
     control(is_d1_51_59 & ((y == 36) | (y == 46)), lambda: phase(pi))
     control(is_d1_53_57 & ((y == 35) | (y == 47)), lambda: phase(pi))
 
-    # 3. D2 interleaved edges
-    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
-    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
-    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
+    # 3. D2 REVERSE edges [c4, c3, c2, c1]
     control((y >= 17) & (y <= 21) & ((x == 32) | (x == 48)), lambda: phase(pi))
+    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
+    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
+    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
 ```
-
----
-
-## Key Technical Discoveries
-
-### 1. Control Consolidation with Bitwise OR
-The most powerful optimization came from consolidating symmetric controls using bitwise OR on equality checks:
-- Y-symmetry: `(y == 36) | (y == 46)` instead of two separate controls
-- X-symmetry: `(x == 33) | (x == 47)` instead of two separate controls
-
-### 2. Control Ordering Matters
-Ordering controls from largest to smallest region improved depth by 32 points (3,992 → 3,960).
-
-### 3. Control Interleaving
-Interleaving D2 edge controls among D1 shells balanced phase control density, yielding an additional 28-point improvement (3,820 → 3,792).
-
-### 4. INTENSIVE Transpilation Critical
-Setting `transpilation_level=TranspilationOption.INTENSIVE` in both transpilation AND export was essential — saved 327 depth points over AUTO_OPTIMIZE.
-
-### 5. Region Merging
-Merging Bar (x=27..48) and D1 core (x=49..61) into one control eliminated redundancy and saved 320 depth points.
-
----
-
-## Files
-
-### Submission Files
-- `submission.qasm` - Verified transpiled circuit (depth 3,792)
-- `final_best.qasm` - Backup copy (depth 3,792)
-- `submission.qmod` - Qmod source
-
-### Documentation
-- `FINAL_REPORT.md` - This document
-- `BREAKTHROUGH_LOG.md` - Detailed breakthrough history
-- `OPTIMIZATION_DASHBOARD.md` - Complete results
-- `classiq-challenge-baseline (1).ipynb` - Main notebook
 
 ---
 
@@ -152,17 +83,5 @@ Merging Bar (x=27..48) and D1 core (x=49..61) into one control eliminated redund
 ✅ Ancillas returned to |0⟩  
 ✅ Correct phase pattern  
 ✅ Global phase independent of coordinates  
-✅ Depth: 3,792  
-✅ CX count: 2,530  
-
----
-
-## Competition Context
-
-- **Baseline provided:** 5,329 depth
-- **Our improvement:** 1,537 points (28.84% reduction)
-- **Ranking metric:** Depth (primary), CX count (tiebreaker)
-
----
-
-**End of Report**
+✅ Depth: 3,749  
+✅ CX count: 2,519  

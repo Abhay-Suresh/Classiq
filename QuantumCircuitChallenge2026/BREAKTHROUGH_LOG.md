@@ -1,26 +1,26 @@
 # Optimization Breakthrough Log
 
-## Current Record: Depth 3,792 | CX 2,530
+## Current Record: Depth 3,749 | CX 2,519
 
 **Date:** 2026-09-19  
 **Status:** ✅ VERIFIED AND CORRECT
 
 ### Result Details
-- **Approach:** D2 Interleaved Edges (10-Control Hybrid)
-- **Depth:** 3,792
-- **CX count:** 2,530
+- **Approach:** Reverse D2 Ordering + pytket Post-Processing
+- **Depth:** 3,749
+- **CX count:** 2,519
 - **Width:** 18 qubits
-- **Improvement over baseline (5,329):** 1,537 points (28.84%)
-- **Improvement over previous best (3,820):** 28 depth points (0.73%)
+- **Improvement over baseline (5,329):** 1,580 points (29.65%)
+- **Verification:** max error 4.97e-16, all 4,096 states correct
 
 ### Verification Status
-- **Max statevector error:** 2.34 × 10⁻¹⁶ ✓
-- **Ancilla error:** 5.80 × 10⁻¹⁷ ✓
-- **Normalization error:** 1.90 × 10⁻¹⁴ ✓
+- **Max statevector error:** 4.97 × 10⁻¹⁶ ✓
+- **Ancilla error:** 2.07 × 10⁻¹⁶ ✓
+- **Normalization error:** 4.44 × 10⁻¹⁶ ✓
 - **Pixel exactness:** 4,096/4,096 (100%) ✓
-- **Test states:** 3 random product-phase superpositions ✓
+- **Test states:** Full statevector verification ✓
 
-### Core Oracle Structure (D2 Interleaved Edges)
+### Core Oracle Structure (Reverse D2 Interleaved Edges)
 ```python
 @qperm
 def oracle_d2_edges_middle(x: Const[QNum], y: Const[QNum]) -> None:
@@ -40,22 +40,17 @@ def oracle_d2_edges_middle(x: Const[QNum], y: Const[QNum]) -> None:
     control(is_d1_51_59 & ((y == 36) | (y == 46)), lambda: phase(pi))
     control(is_d1_53_57 & ((y == 35) | (y == 47)), lambda: phase(pi))
 
-    # 3. D2 interleaved edges (optimized positioning)
-    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
-    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
-    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
+    # 3. D2 REVERSE edges [c4, c3, c2, c1] - OPTIMIZED
     control((y >= 17) & (y <= 21) & ((x == 32) | (x == 48)), lambda: phase(pi))
+    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
+    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
+    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
 ```
 
-### Key Breakthrough: D2 Interleaved Edges
-Reordering the D2 edge controls (interleaving them with D1 shell controls) provided a 28-depth point improvement. This suggests that the Classiq synthesis engine benefits from balancing the "density" of phase controls applied to different coordinate regions.
+### Key Breakthrough: Reverse D2 Ordering
+Reversing the order of D2 edge controls from [c1, c2, c3, c4] to [c4, c3, c2, c1] combined with pytket's FullPeepholeOptimise provided a final 30-depth point improvement.
 
-### Pixel Coverage (Total: 1,097 black pixels ✓)
-No change in pixel coverage — 1,097 black pixels correctly marked.
-
-### Files to Restore If Needed
-```bash
-submission.qasm          # QASM circuit, depth 3,792
-final_best.qasm          # Backup copy, depth 3,792
-verify_3792.py           # Full verification script
-```
+### Files
+- `submission.qasm` - Verified transpiled circuit (depth 3,749)
+- `submission.qmod` - QMOD source
+- `verify_submission.py` - Full verification script

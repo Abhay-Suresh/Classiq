@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Standalone verification script for the final submission.qasm (Depth 3,792 | CX 2,530).
+Standalone verification script for the final submission.qasm (Depth 3,749 | CX 2,519).
 Tests 3 random product-phase superpositions across all 4,096 basis coordinates.
 """
 import re
