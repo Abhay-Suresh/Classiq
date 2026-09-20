@@ -1,8 +1,24 @@
-qfunc logo_phase_oracle_tier5_best(const x: qnum, const y: qnum) {
+qfunc logo_phase_oracle(const x: qnum, const y: qnum) {
   control ((((x >= 2) & (x <= 26)) & (y >= 29)) & (y <= 53)) {
     phase (pi);
   }
-  control ((((x >= 34) & (x <= 46)) & (y >= 13)) & (y <= 25)) {
+  control ((y >= 17) & (y <= 21)) {
+    control (x == 32) {
+      phase (pi);
+    }
+    control (x == 48) {
+      phase (pi);
+    }
+  }
+  control ((y >= 15) & (y <= 23)) {
+    control (x == 33) {
+      phase (pi);
+    }
+    control (x == 47) {
+      phase (pi);
+    }
+  }
+  control ((((x >= 27) & (x <= 61)) & (y >= 39)) & (y <= 43)) {
     phase (pi);
   }
   control ((x >= 36) & (x <= 44)) {
@@ -21,21 +37,8 @@ qfunc logo_phase_oracle_tier5_best(const x: qnum, const y: qnum) {
       phase (pi);
     }
   }
-  control ((y >= 17) & (y <= 21)) {
-    control (x == 32) {
-      phase (pi);
-    }
-    control (x == 48) {
-      phase (pi);
-    }
-  }
-  control ((y >= 15) & (y <= 23)) {
-    control (x == 33) {
-      phase (pi);
-    }
-    control (x == 47) {
-      phase (pi);
-    }
+  control ((((x >= 34) & (x <= 46)) & (y >= 13)) & (y <= 25)) {
+    phase (pi);
   }
   control ((x >= 50) & (x <= 60)) {
     control (y == 37) {
@@ -67,9 +70,6 @@ qfunc logo_phase_oracle_tier5_best(const x: qnum, const y: qnum) {
       phase (pi);
     }
   }
-  control ((((x >= 27) & (x <= 61)) & (y >= 39)) & (y <= 43)) {
-    phase (pi);
-  }
 }
 
 qfunc main(output x: qnum<6>, output y: qnum<6>) {
@@ -77,5 +77,5 @@ qfunc main(output x: qnum<6>, output y: qnum<6>) {
   allocate(y);
   hadamard_transform(x);
   hadamard_transform(y);
-  logo_phase_oracle_tier5_best(x, y);
+  logo_phase_oracle(x, y);
 }

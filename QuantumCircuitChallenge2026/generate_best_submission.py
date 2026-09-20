@@ -1,4 +1,4 @@
-﻿import re
+import re
 import warnings
 from pathlib import Path
 import numpy as np
@@ -12,30 +12,58 @@ from pytket.passes import FullPeepholeOptimise
 GRID_SIZE = 64
 COORD_BITS = 6
 
-@qperm
-def logo_phase_oracle(x: Const[QNum], y: Const[QNum]) -> None:
-    is_S_x = (x >= 2) & (x <= 26)
+@qfunc
+def logo_phase_oracle_tier5_best(x: Const[QNum], y: Const[QNum]) -> None:
+    # Tier 5.2: D2 (Core -> X -> Y) Then D1 (Shells -> Bar) (Depth 2959, CX 1948 - NEW CHAMPION)
 
-    # 1. Largest regions
-    control(is_S_x & (y >= 29) & (y <= 53), lambda: phase(pi))
-    control((y >= 13) & (y <= 25) & (x >= 34) & (x <= 46), lambda: phase(pi))
-    control((x >= 27) & (x <= 61) & (y >= 39) & (y <= 43), lambda: phase(pi))
+    # 1. Main Square S
+    control((x >= 2) & (x <= 26) & (y >= 29) & (y <= 53), lambda: phase(pi))
 
-    # 2. D1 outer shells with predicate caching (nesting)
+    # 2. D2 Core
+    control((x >= 34) & (x <= 46) & (y >= 13) & (y <= 25), lambda: phase(pi))
+
+    # 3. D2 X-dominant edges
+    def d2_x36_44_body():
+        control(y == 12, lambda: phase(pi))
+        control(y == 26, lambda: phase(pi))
+    control((x >= 36) & (x <= 44), d2_x36_44_body)
+
+    def d2_x38_42_body():
+        control(y == 11, lambda: phase(pi))
+        control(y == 27, lambda: phase(pi))
+    control((x >= 38) & (x <= 42), d2_x38_42_body)
+
+    # 4. D2 Y-dominant edges
+    def d2_y17_21_body():
+        control(x == 32, lambda: phase(pi))
+        control(x == 48, lambda: phase(pi))
+    control((y >= 17) & (y <= 21), d2_y17_21_body)
+
+    def d2_y15_23_body():
+        control(x == 33, lambda: phase(pi))
+        control(x == 47, lambda: phase(pi))
+    control((y >= 15) & (y <= 23), d2_y15_23_body)
+
+    # 5. D1 Shells (placed before Bar for optimal peephole rotation and CX cancellation)
     def d1_50_60_body():
-        control((y >= 37) & (y <= 38), lambda: phase(pi))
-        control((y >= 44) & (y <= 45), lambda: phase(pi))
-        
+        control(y == 37, lambda: phase(pi))
+        control(y == 38, lambda: phase(pi))
+        control(y == 44, lambda: phase(pi))
+        control(y == 45, lambda: phase(pi))
     control((x >= 50) & (x <= 60), d1_50_60_body)
 
-    control((x >= 51) & (x <= 59) & ((y == 36) | (y == 46)), lambda: phase(pi))
-    control((x >= 53) & (x <= 57) & ((y == 35) | (y == 47)), lambda: phase(pi))
+    def d1_51_59_body():
+        control(y == 36, lambda: phase(pi))
+        control(y == 46, lambda: phase(pi))
+    control((x >= 51) & (x <= 59), d1_51_59_body)
 
-    # 3. D2 REVERSE edges [c4, c3, c2, c1]
-    control((y >= 17) & (y <= 21) & ((x == 32) | (x == 48)), lambda: phase(pi))
-    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
-    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
-    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
+    def d1_53_57_body():
+        control(y == 35, lambda: phase(pi))
+        control(y == 47, lambda: phase(pi))
+    control((x >= 53) & (x <= 57), d1_53_57_body)
+
+    # 6. Main D1 Bar
+    control((x >= 27) & (x <= 61) & (y >= 39) & (y <= 43), lambda: phase(pi))
 
 @qfunc
 def main(x: Output[QNum[COORD_BITS]], y: Output[QNum[COORD_BITS]]) -> None:
@@ -43,7 +71,7 @@ def main(x: Output[QNum[COORD_BITS]], y: Output[QNum[COORD_BITS]]) -> None:
     allocate(y)
     hadamard_transform(x)
     hadamard_transform(y)
-    logo_phase_oracle(x, y)
+    logo_phase_oracle_tier5_best(x, y)
 
 print("Synthesizing best nested model...")
 constraints = Constraints(optimization_parameter=OptimizationParameter.DEPTH, max_width=18)

@@ -1,6 +1,6 @@
 # Optimization Dashboard
 
-**Current Best:** Depth 3,535 | CX 2,337
+**Current Best:** Depth 2,959 | CX 1,948
 
 ## Complete Optimization History
 
@@ -18,15 +18,16 @@
 | 9 | D₂ Interleaved Edges | 3,792 | 2,530 | +28 | ✅ Verified |
 | 10 | pytket Post-Processing | 3,779 | 2,530 | +13 | ✅ Verified |
 | 11 | Reverse D₂ Ordering + pytket | 3,749 | 2,519 | +30 | ✅ Verified |
-| **12** | **Predicate Caching (Nested Controls)** | **3,535** | **2,337** | **+214** | **✅ FINAL BEST** |
+| 12 | Predicate Caching (Nested Controls) | 3,535 | 2,337 | +214 | ✅ Verified |
+| 13 | Tier 1 Granular Predicates | 3,011 | 1,965 | +524 | ✅ Verified |
+| 14 | Tier 4.1 Region Permutation | 2,967 | 1,959 | +44 | ✅ Verified |
+| **15** | **Tier 5.2 Micro Permutation (D2 Core->X->Y, D1 Shells->Bar)** | **2,959** | **1,948** | **+8** | **✅ FINAL BEST** |
 
-**Total improvement:** 1,794 depth points (33.68% reduction from baseline)
+**Total improvement:** 2,370 depth points (44.47% reduction from baseline)
 
 ## Key Insights
 
-1. **Predicate Caching via Nested Controls:** Caching heavy 6-bit arithmetic comparator `(x >= 50) & (x <= 60)` into an ancilla scratchpad once and reusing it across multiple conditional phase gates eliminated redundant carry chains (+214 depth, +182 CX).
-2. **Control Consolidation:** Combining symmetric controls with bitwise OR (`(x==33)|(x==47)`) eliminates redundant comparator trees (+140 depth).
-3. **INTENSIVE Transpilation:** Essential for all optimizations (+327 depth improvement alone).
-4. **Region Merging:** Merging Bar+D1 core eliminated duplicate coverage (+320 depth).
-5. **Reverse D₂ Ordering + pytket:** Optimizes gate density, commutations, and peephole rotation merging (+43 depth total).
-6. **Sequential Ancilla Reuse vs Concurrent Locking:** Exploiting all 6 available ancillas sequentially maximizes parallel synthesis width without exceeding the 18-qubit hardware budget.
+1. **Predicate Caching via Nested Controls:** Caching heavy 6-bit arithmetic comparator `(x >= 50) & (x <= 60)` into an ancilla scratchpad once and reusing it across multiple conditional phase gates eliminated redundant carry chains.
+2. **Control Consolidation:** Combining symmetric controls with bitwise OR (`(x==33)|(x==47)`) eliminates redundant comparator trees.
+3. **Region Evaluation Commutation & Gate Cancellation:** Because all phase operations commute mathematically, altering evaluation order of independent spatial regions cancels redundant CX pairs across adjacent multi-controlled gates. Placing D2 regions contiguously before D1 regions allows pytket to maximally commute and cancel rotations (broke the 3,000 threshold to 2,967).
+4. **Sequential Ancilla Reuse vs Explicit Uncomputation:** Explicitly attempting to save depth via `anc ^= ...` fails dramatically (verified depth 6,317–7,746). Instead, nesting regions within classiq `control()` closures correctly maximizes compiler-managed uncomputation without blowing up depth.
