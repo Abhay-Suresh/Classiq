@@ -1,6 +1,6 @@
 # Optimization Dashboard
 
-**Current Best:** Depth 3,749 | CX 2,519
+**Current Best:** Depth 3,535 | CX 2,337
 
 ## Complete Optimization History
 
@@ -17,15 +17,16 @@
 | 8 | D₂ X-Consolidation | 3,820 | 2,518 | +140 | ✅ Verified |
 | 9 | D₂ Interleaved Edges | 3,792 | 2,530 | +28 | ✅ Verified |
 | 10 | pytket Post-Processing | 3,779 | 2,530 | +13 | ✅ Verified |
-| **11** | **Reverse D₂ Ordering + pytket** | **3,749** | **2,519** | **+30** | **✅ FINAL** |
+| 11 | Reverse D₂ Ordering + pytket | 3,749 | 2,519 | +30 | ✅ Verified |
+| **12** | **Predicate Caching (Nested Controls)** | **3,535** | **2,337** | **+214** | **✅ FINAL BEST** |
 
-**Total improvement:** 1,580 depth points (29.65% reduction from baseline)
+**Total improvement:** 1,794 depth points (33.68% reduction from baseline)
 
 ## Key Insights
 
-1. **Control consolidation:** Combining symmetric controls with bitwise OR (`(x==33)|(x==47)`) was the single most effective technique (+140 depth in one step)
-2. **Control ordering:** Largest regions first improves synthesis (+32 depth)
-3. **Control interleaving:** Balancing phase control density across regions (+28 depth)
-4. **INTENSIVE transpilation:** Essential for all optimizations (+327 depth improvement alone)
-5. **Region merging:** Merging Bar+D1 core eliminated redundancy (+320 depth)
-6. **Reverse D2 ordering + pytket:** Optimizes gate density and schedule (+43 depth total)
+1. **Predicate Caching via Nested Controls:** Caching heavy 6-bit arithmetic comparator `(x >= 50) & (x <= 60)` into an ancilla scratchpad once and reusing it across multiple conditional phase gates eliminated redundant carry chains (+214 depth, +182 CX).
+2. **Control Consolidation:** Combining symmetric controls with bitwise OR (`(x==33)|(x==47)`) eliminates redundant comparator trees (+140 depth).
+3. **INTENSIVE Transpilation:** Essential for all optimizations (+327 depth improvement alone).
+4. **Region Merging:** Merging Bar+D1 core eliminated duplicate coverage (+320 depth).
+5. **Reverse D₂ Ordering + pytket:** Optimizes gate density, commutations, and peephole rotation merging (+43 depth total).
+6. **Sequential Ancilla Reuse vs Concurrent Locking:** Exploiting all 6 available ancillas sequentially maximizes parallel synthesis width without exceeding the 18-qubit hardware budget.

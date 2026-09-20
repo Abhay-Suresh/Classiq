@@ -8,11 +8,13 @@ qperm logo_phase_oracle(const x: qnum, const y: qnum) {
   control ((((x >= 27) & (x <= 61)) & (y >= 39)) & (y <= 43)) {
     phase (pi);
   }
-  control (((y >= 37) & (y <= 38)) & ((x >= 50) & (x <= 60))) {
-    phase (pi);
-  }
-  control (((y >= 44) & (y <= 45)) & ((x >= 50) & (x <= 60))) {
-    phase (pi);
+  control ((x >= 50) & (x <= 60)) {
+    control ((y >= 37) & (y <= 38)) {
+      phase (pi);
+    }
+    control ((y >= 44) & (y <= 45)) {
+      phase (pi);
+    }
   }
   control (((x >= 51) & (x <= 59)) & ((y == 36) | (y == 46))) {
     phase (pi);
