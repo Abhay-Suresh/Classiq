@@ -1,88 +1,66 @@
 # Classiq Quantum Circuit Challenge 2026 - Final Report
 
-**Date:** 2026-09-19  
-**Challenge:** Quantum Phase Oracle for 64×64 Classiq Logo
+**Date:** 2026-09-21  
+**Challenge:** Quantum Phase Oracle for 64×64 Classiq Logo  
+**Target Metrics:** Circuit Depth (primary), CX Gate Count (secondary)  
+**Constraint:** Max Width ≤ 18 qubits (12 coordinate qubits + 6 ancillas), Basis Gates `['u3', 'cx']`  
 
 ---
 
-## Final Verified Results
+## 🏆 Final Verified Results
 
 ### Circuit Metrics
-- **Depth:** 3,535
-- **CX Count:** 2,337
-- **Width:** 18 qubits (12 coordinates + 6 ancillas)
-- **Basis Gates:** u3, cx only
+- **Depth:** **2,959** (44.47% reduction from baseline)
+- **CX Count:** **1,948** (44.37% reduction from baseline)
+- **Total Gates:** **3,864**
+- **Width:** **18 qubits** (6 $x$ coordinates, 6 $y$ coordinates, 6 ancillas)
+- **Basis Gates:** `u3`, `cx` only
 
 ### Verification Status
-✅ **PASSED** - All correctness checks verified
-- Max error: 4.97 × 10⁻¹⁶
-- Ancilla error: 2.07 × 10⁻¹⁶
-- Normalization error: 4.44 × 10⁻¹⁶
-- All 1,097 black pixels correctly marked with -1 phase
-- All 2,999 white pixels correctly left unchanged
+✅ **PASSED** - All correctness and unitary invariants strictly verified:
+- **Max Phase Error:** $3.62 \times 10^{-16}$
+- **Ancilla Residual Error:** $2.26 \times 10^{-16}$
+- **Normalization Error:** $4.44 \times 10^{-16}$
+- All 1,097 black pixels correctly assigned a $\pi$ phase shift ($-1$).
+- All 2,999 white pixels correctly assigned a $0$ phase shift ($+1$).
 
 ---
 
-## Optimization Journey
+## 🚀 Optimization Journey
 
-### Baseline (Starting Point)
-- **Depth:** 5,329
-- **CX Count:** 3,502
-- **Strategy:** 18 independent rectangle checks
-
-### Optimization Highlights
-1. **X-Predicate Sharing + Control Reordering:** Depth 5,234 (-95)
-2. **Y-Value Consolidation:** Depth 4,959 (-370)
-3. **INTENSIVE Transpilation:** Depth 4,632 (-697)
-4. **S-Complete Repartitioning:** Depth 4,361 (-968)
-5. **D₂ Merged-Pairs Symmetry:** Depth 4,312 (-1,017)
-6. **10-Control Hybrid:** Depth 3,992 (-1,337)
-7. **S-First Control Ordering:** Depth 3,960 (-1,369)
-8. **D₂ X-Consolidation:** Depth 3,820 (-1,509)
-9. **D₂ Interleaved Edges:** Depth 3,792 (-1,537)
-10. **pytket Post-Processing:** Depth 3,779 (-1,550)
-11. **Reverse D₂ Ordering + pytket:** Depth 3,749 (-1,580, 29.65% reduction)
-12. **Predicate Caching (nested control):** **Depth 3,535 (-214 / -182 CX, 33.68% total reduction)**, CX 2,337
-
----
-
-## Final Oracle Structure
-
-```python
-@qperm
-def logo_phase_oracle(x: Const[QNum], y: Const[QNum]) -> None:
-    is_S_x = (x >= 2) & (x <= 26)
-
-    # 1. Largest regions
-    control(is_S_x & (y >= 29) & (y <= 53), lambda: phase(pi))
-    control((y >= 13) & (y <= 25) & (x >= 34) & (x <= 46), lambda: phase(pi))
-    control((x >= 27) & (x <= 61) & (y >= 39) & (y <= 43), lambda: phase(pi))
-
-    # 2. D1 outer shells with PREDICATE CACHING (nested control)
-    # Cache (x >= 50) & (x <= 60) in an ancilla once, reuse for all D1 shells
-    control((x >= 50) & (x <= 60)) {
-        control((y >= 37) & (y <= 38), lambda: phase(pi))
-        control((y >= 44) & (y <= 45), lambda: phase(pi))
-    }
-    control((x >= 51) & (x <= 59) & ((y == 36) | (y == 46)), lambda: phase(pi))
-    control((x >= 53) & (x <= 57) & ((y == 35) | (y == 47)), lambda: phase(pi))
-
-    # 3. D2 REVERSE edges [c4, c3, c2, c1]
-    control((y >= 17) & (y <= 21) & ((x == 32) | (x == 48)), lambda: phase(pi))
-    control((x >= 36) & (x <= 44) & ((y == 12) | (y == 26)), lambda: phase(pi))
-    control((y >= 15) & (y <= 23) & ((x == 33) | (x == 47)), lambda: phase(pi))
-    control((x >= 38) & (x <= 42) & ((y == 11) | (y == 27)), lambda: phase(pi))
-```
+| # | Approach / Technique | Depth | CX | Depth Δ | Status |
+|---|----------------------|-------|-----|---------|--------|
+| 0 | Baseline (18 independent rectangles) | 5,329 | 3,502 | — | ✅ Verified |
+| 1 | X-Predicate Sharing + Control Reordering | 5,234 | 3,492 | -95 | ✅ Verified |
+| 2 | Y-Value Consolidation | 4,959 | 3,312 | -275 | ✅ Verified |
+| 3 | Classiq INTENSIVE Transpilation | 4,632 | 3,126 | -327 | ✅ Verified |
+| 4 | S-Complete Geometric Repartition | 4,361 | 2,917 | -271 | ✅ Verified |
+| 5 | D₂ Merged-Pairs Symmetry | 4,312 | 2,888 | -49 | ✅ Verified |
+| 6 | 10-Control Hybrid | 3,992 | 2,645 | -320 | ✅ Verified |
+| 7 | S-First Control Ordering | 3,960 | 2,644 | -32 | ✅ Verified |
+| 8 | D₂ X-Consolidation | 3,820 | 2,518 | -140 | ✅ Verified |
+| 9 | D₂ Interleaved Edges | 3,792 | 2,530 | -28 | ✅ Verified |
+| 10 | pytket FullPeephole Post-Processing | 3,779 | 2,530 | -13 | ✅ Verified |
+| 11 | Reverse D₂ Ordering + pytket | 3,749 | 2,519 | -30 | ✅ Verified |
+| 12 | Predicate Caching (Nested Controls) | 3,535 | 2,337 | -214 | ✅ Verified |
+| 13 | Tier 1 Granular Predicates & Factoring | 3,011 | 1,965 | -524 | ✅ Verified |
+| 14 | Tier 4.1 Region Commutation & Permutation | 2,967 | 1,959 | -44 | ✅ Verified |
+| **15** | **Tier 5.2 Micro Permutation (D2 Core→X→Y, D1 Shells→Bar)** | **2,959** | **1,948** | **-8** | **🏆 CHAMPION** |
 
 ---
 
-## Submission Checklist
+## 🔬 Key Innovations & Optimization Strategies
 
-✅ Circuit width ≤ 18 qubits  
-✅ Basis gates: u3, cx only  
-✅ Coordinates preserved (x, y unchanged)  
-✅ Ancillas returned to |0⟩  
-✅ Correct phase pattern  
-✅ Global phase independent of coordinates  
-✅ Depth: 3,535  
-✅ CX count: 2,337  
+1. **Predicate Caching via Nested Closures:**
+   By nesting disjoint sub-checks inside continuous multi-bit interval closures (`control(x_range, lambda: (control(y1, ...), control(y2, ...)))`), Classiq's synthesis engine computes the 6-bit arithmetic comparator carry chain into an ancilla *once* and reuses it across sequential phase gates, eliminating redundant evaluations.
+
+2. **Phase Oracle Commutation Exploitation:**
+   Since all conditional diagonal phase gates commute $[U_{\phi_1}, U_{\phi_2}] = 0$, the spatial evaluation order is completely unconstrained. By ordering D₂ components contiguously before D₁, and sequencing within blocks from outer shells into the inner bar, adjacent Multi-Controlled X (MCX) ladders allow PyTket's `FullPeepholeOptimise` pass to maximally cancel intermediate $CX$ pairs across gate boundaries.
+
+3. **Compiler-Managed Ancilla Lifecycle:**
+   Manual uncomputation schemes (`anc ^= predicate`) fail due to rigid sequential ancilla dependency graphs, bloating depth to >6,000. Expressing predicates cleanly via functional Python closures allowed Classiq's synthesis synthesis engine to dynamically schedule borrowable ancillas within the 18-qubit hardware budget.
+
+4. **Multi-Stage Optimization Pipeline:**
+   - **Synthesis:** Classiq synthesis with depth optimization target (`max_width=18`).
+   - **Transpilation:** Classiq `INTENSIVE` level transpilation targeting `['u3', 'cx']`.
+   - **Peephole & Phase-Gadget Simplification:** PyTket `FullPeepholeOptimise` and `OptimisePhaseGadgets` pass sequences.

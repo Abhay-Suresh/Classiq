@@ -1,4 +1,4 @@
-qfunc logo_phase_oracle_tier5_best(const x: qnum, const y: qnum) {
+qperm logo_phase_oracle(const x: qnum, const y: qnum) {
   control ((((x >= 2) & (x <= 26)) & (y >= 29)) & (y <= 53)) {
     phase (pi);
   }
@@ -77,5 +77,5 @@ qfunc main(output x: qnum<6>, output y: qnum<6>) {
   allocate(y);
   hadamard_transform(x);
   hadamard_transform(y);
-  logo_phase_oracle_tier5_best(x, y);
+  logo_phase_oracle(x, y);
 }
