@@ -10,8 +10,8 @@
 ## 🏆 Final Verified Results
 
 ### Circuit Metrics
-- **Depth:** **1,711** (68.0% reduction from baseline 5,329, -3,618 depth)
-- **CX Count:** **1,634** (53.3% reduction from baseline 3,502, -1,868 CX)
+- **Depth:** **1,703** (68.0% reduction from baseline 5,329, -3,626 depth)
+- **CX Count:** **1,638** (53.2% reduction from baseline 3,502, -1,864 CX)
 - **Width:** **18 qubits** (6 x coordinates, 6 y coordinates, 6 ancillas)
 - **Basis Gates:** `u3`, `cx` only
 
@@ -48,7 +48,7 @@
 | 15 | Tier 5.2 Micro Permutation | 2,959 | 1,948 | 18 | ✅ Verified |
 | 16 | Rank-10 Separable Oracle | 2,750 | 2,771 | 18 | ✅ Verified |
 | 17 | Factored ESOP (Y-Grouped Cover) | 2,263 | 2,299 | 18 | ✅ Verified |
-| **18** | **Multi-Variable Trie-Factored ESOP** | **1,711** | **1,634** | **18** | **🏆 NEW CHAMPION** |
+| **18** | **Multi-Variable Trie-Factored ESOP** | **1,703** | **1,638** | **18** | **🏆 NEW CHAMPION** |
 
 ---
 
@@ -66,8 +66,8 @@ This drastically minimizes redundant multiple controls because a given component
 
 ### Results
 
-- **Depth:** **1,711** (24.4% reduction over previous Depth 2,263 ESOP champion)
-- **CX Count:** **1,634**
+- **Depth:** **1,703** (25% reduction over previous Depth 2,263 ESOP champion)
+- **CX Count:** **1,638**
 - **Width:** **18 qubits**
 - **Fidelity:** **Exact** (Max error 2.05e-16)
 
