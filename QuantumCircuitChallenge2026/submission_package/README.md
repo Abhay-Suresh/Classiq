@@ -3,11 +3,11 @@
 This directory contains the standalone submission bundle for the **Classiq Quantum Circuit Challenge 2026**.
 
 ## 📊 Final Performance Metrics
-- **Circuit Depth:** **1,705** (68.0% reduction from baseline 5,329)
-- **CX Count:** **1,637** (53.3% reduction from baseline 3,502)
+- **Circuit Depth:** **1,664** (68.8% reduction from baseline 5,329)
+- **CX Count:** **1,595** (54.5% reduction from baseline 3,502)
 - **Qubit Width:** **18 qubits** (12 data qubits + 6 ancillas)
 - **Basis Gates:** `u3`, `cx` only
-- **Verification:** **100% Exact** (Max Error $< 2.81 \times 10^{-16}$, Ancilla leakage $< 1.57 \times 10^{-16}$)
+- **Verification:** **100% Exact** (Max Error $< 2.06 \times 10^{-16}$, Ancilla leakage $< 1.59 \times 10^{-16}$)
 
 ---
 
