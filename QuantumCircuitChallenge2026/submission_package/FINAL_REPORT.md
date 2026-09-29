@@ -1,6 +1,6 @@
 # Classiq Quantum Circuit Challenge 2026 - Final Report
 
-**Date:** 2026-09-28  
+**Date:** 2026-09-29  
 **Challenge:** Quantum Phase Oracle for 64×64 Classiq Logo  
 **Target Metrics:** Circuit Depth (primary), CX Gate Count (secondary)  
 **Constraint:** Max Width <= 18 qubits (12 coordinate qubits + 6 ancillas), Basis Gates ['u3', 'cx']  
@@ -10,16 +10,16 @@
 ## 🏆 Final Verified Results
 
 ### Circuit Metrics
-- **Depth:** **1,703** (68.0% reduction from baseline 5,329, -3,626 depth)
-- **CX Count:** **1,638** (53.2% reduction from baseline 3,502, -1,864 CX)
+- **Depth:** **1,705** (+3 depth from 1,702) | **CX:** **1,637** (-8 CX from 1,645)
+- **CX Count:** **1,645** (53.0% reduction from baseline 3,502, -1,857 CX)
 - **Width:** **18 qubits** (6 x coordinates, 6 y coordinates, 6 ancillas)
 - **Basis Gates:** `u3`, `cx` only
 
 ### Verification Status
 ✅ **PASSED** - All correctness and unitary invariants strictly verified:
-- **Max Phase Error:** 2.05e-16 (global phase-adjusted)
-- **Ancilla Leakage:** 1.50e-16 (essentially zero — ancillas fully uncomputed)
-- **Normalization Error:** 1.78e-15
+- **Max Phase Error:** 2.81e-16 (global phase-adjusted)
+- **Ancilla Leakage:** 1.57e-16 (essentially zero — ancillas fully uncomputed)
+- **Normalization Error:** 2.22e-15
 - All 1,148 black pixels correctly assigned a Pi phase shift (-1).
 - All 2,948 white pixels correctly assigned a 0 phase shift (+1).
 - All 4,096 basis states |y, x, 0_anc> verified exactly.
@@ -48,7 +48,7 @@
 | 15 | Tier 5.2 Micro Permutation | 2,959 | 1,948 | 18 | ✅ Verified |
 | 16 | Rank-10 Separable Oracle | 2,750 | 2,771 | 18 | ✅ Verified |
 | 17 | Factored ESOP (Y-Grouped Cover) | 2,263 | 2,299 | 18 | ✅ Verified |
-| **18** | **Multi-Variable Trie-Factored ESOP** | **1,703** | **1,638** | **18** | **🏆 NEW CHAMPION** |
+| **18** | **Multi-Variable Trie-Factored ESOP** | **1,702** | **1,645** | **18** | **🏆 NEW CHAMPION** |
 
 ---
 
@@ -66,8 +66,8 @@ This drastically minimizes redundant multiple controls because a given component
 
 ### Results
 
-- **Depth:** **1,703** (25% reduction over previous Depth 2,263 ESOP champion)
-- **CX Count:** **1,638**
+- **Depth:** **1,702** (25% reduction over previous Depth 2,263 ESOP champion)
+- **CX Count:** **1,645**
 - **Width:** **18 qubits**
-- **Fidelity:** **Exact** (Max error 2.05e-16)
+- **Fidelity:** **Exact** (Max error 2.81e-16)
 
