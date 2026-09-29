@@ -3,11 +3,11 @@
 This directory contains the standalone submission bundle for the **Classiq Quantum Circuit Challenge 2026**.
 
 ## 📊 Final Performance Metrics
-- **Circuit Depth:** **1,664** (68.8% reduction from baseline 5,329)
-- **CX Count:** **1,595** (54.5% reduction from baseline 3,502)
+- **Circuit Depth:** **1,597** (70.0% reduction from baseline 5,329)
+- **CX Count:** **1,557** (55.5% reduction from baseline 3,502)
 - **Qubit Width:** **18 qubits** (12 data qubits + 6 ancillas)
 - **Basis Gates:** `u3`, `cx` only
-- **Verification:** **100% Exact** (Max Error $< 2.06 \times 10^{-16}$, Ancilla leakage $< 1.59 \times 10^{-16}$)
+- **Verification:** **100% Exact** (Max Error $< 2.53 \times 10^{-16}$, Ancilla leakage $< 1.32 \times 10^{-16}$)
 
 ---
 
@@ -31,4 +31,4 @@ python verify_submission.py
 ```bash
 python generate_best_submission.py
 ```
-This executes the 61-cube ESOP loader, prefix-trie QMOD generation, intensive Classiq transpilation, and PyTket peephole optimization passes, writing the resulting circuit to `submission.qasm`.
+This executes the 60-cube ESOP loader, prefix-trie QMOD generation, intensive Classiq transpilation, and PyTket peephole optimization passes, writing the resulting circuit to `submission.qasm`.

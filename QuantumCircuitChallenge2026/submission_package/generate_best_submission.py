@@ -12,9 +12,9 @@ from pytket.circuit import OpType
 
 from pathlib import Path
 
-# Load the 61-cube champion ESOP
+# Load the 60-cube champion ESOP
 pkg_dir = Path(__file__).parent
-with open(pkg_dir / "best_esop.json") as f:
+with open(pkg_dir / "optimized_esop_60.json") as f:
     esop = json.load(f)
 
 all_cubes = []
@@ -107,7 +107,7 @@ def render_node(node, x, y):
         else:
             render_node(child, x, y)
 
-trie_root = build_advanced_trie(all_cubes, min_freq=3, score_mode='freq', var_priority=None)
+trie_root = build_advanced_trie(all_cubes, min_freq=2, score_mode='freq', var_priority=None)
 
 @qfunc
 def main(x: Output[QArray[QBit, 6]], y: Output[QArray[QBit, 6]]):
@@ -136,11 +136,14 @@ raw_sub = export(transpiled, TargetLanguage.QASM2,
                  transpilation_config=TranspilationConfig(transpilation_level=TranspilationOption.INTENSIVE, basis_gates=["u3", "cx"]))
 
 tk_circ = circuit_from_qasm_str(raw_sub)
-SynthesiseTket().apply(tk_circ)
-FullPeepholeOptimise().apply(tk_circ)
-OptimisePhaseGadgets().apply(tk_circ)
-AutoRebase({OpType.U3, OpType.CX}).apply(tk_circ)
-RemoveRedundancies().apply(tk_circ)
+for i in range(5):
+    old_depth = tk_circ.depth()
+    SynthesiseTket().apply(tk_circ)
+    FullPeepholeOptimise().apply(tk_circ)
+    AutoRebase({OpType.U3, OpType.CX}).apply(tk_circ)
+    RemoveRedundancies().apply(tk_circ)
+    if tk_circ.depth() == old_depth:
+        break
 
 print("="*40)
 print(f"NEW METRICS:")
