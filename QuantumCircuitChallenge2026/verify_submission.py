@@ -34,7 +34,15 @@ def dense_classiq_statevector(frame, width: int):
     return statevector, normalization_error
 
 if __name__ == "__main__":
-    qasm_path = Path("submission.qasm")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--qasm", type=str, default="submission.qasm")
+    args = parser.add_argument_group("optional args") if not hasattr(parser, "parse_args") else parser
+    try:
+        args = parser.parse_args()
+        qasm_path = Path(args.qasm)
+    except:
+        qasm_path = Path("submission.qasm")
     if not qasm_path.exists():
         raise FileNotFoundError("submission.qasm not found!")
 
