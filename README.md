@@ -1,7 +1,7 @@
 # Classiq Quantum Circuit Challenge 2026
 
-![Classiq Logo Phase Oracle](https://img.shields.io/badge/Depth-2%2C959-brightgreen)
-![CX Count](https://img.shields.io/badge/CX_Count-1%2C948-blue)
+![Classiq Logo Phase Oracle](https://img.shields.io/badge/Depth-1%2C703-brightgreen)
+![CX Count](https://img.shields.io/badge/CX_Count-1%2C638-blue)
 ![Qubit Width](https://img.shields.io/badge/Width-18_Qubits-orange)
 ![Verification](https://img.shields.io/badge/Verification-PASSED_(100%25)-success)
 
@@ -13,11 +13,11 @@ This repository contains the winning/champion implementation for the **Classiq Q
 
 | Metric | Baseline | Champion | Total Improvement |
 | :--- | :--- | :--- | :--- |
-| **Circuit Depth** | 5,329 | **2,959** | **-44.47%** (-2,370 depth) |
-| **CX Gate Count** | 3,502 | **1,948** | **-44.37%** (-1,554 CX) |
-| **Total Gate Count**| 7,000+ | **3,864** | **-44.8%** |
+| **Circuit Depth** | 5,329 | **1,703** | **-68.04%** (-3,626 depth) |
+| **CX Gate Count** | 3,502 | **1,638** | **-53.23%** (-1,864 CX) |
 | **Qubit Width** | 18 qubits | **18 qubits** | **100% compliant** |
-| **Correctness** | 100% | **100% Exact** | $E_{\text{max}} < 10^{-15}$ |
+| **Correctness** | 100% | **100% Exact** | $E_{\text{max}} < 3 \times 10^{-16}$ |
+
 
 ---
 
