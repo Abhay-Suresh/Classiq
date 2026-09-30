@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Standalone verification script for the champion submission.qasm (Depth 2,959 | CX 1,948).
+Standalone verification script for the champion submission.qasm (Depth 1,597 | CX 1,557).
 Tests 3 random product-phase superpositions across all 4,096 basis coordinates.
 """
 import re
@@ -34,7 +34,15 @@ def dense_classiq_statevector(frame, width: int):
     return statevector, normalization_error
 
 if __name__ == "__main__":
-    qasm_path = Path("submission.qasm")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--qasm", type=str, default="submission.qasm")
+    args = parser.add_argument_group("optional args") if not hasattr(parser, "parse_args") else parser
+    try:
+        args = parser.parse_args()
+        qasm_path = Path(args.qasm)
+    except:
+        qasm_path = Path("submission.qasm")
     if not qasm_path.exists():
         raise FileNotFoundError("submission.qasm not found!")
 

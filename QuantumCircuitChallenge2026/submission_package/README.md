@@ -14,8 +14,8 @@ This directory contains the standalone submission bundle for the **Classiq Quant
 ## 📦 Package Contents
 
 1. **`submission.qasm`**: The final optimized OpenQASM 2.0 quantum phase oracle circuit.
-2. **`generate_best_submission.py`**: Complete Python pipeline to regenerate and re-optimize the circuit from scratch using Classiq + PyTket (Vectorized GF(2) ESOP + Literal-Scored Prefix Trie Factorization).
-3. **`verify_submission.py`**: Full unitary and phase verification script validating statevectors and ancilla uncomputation.
+2. **`verify_submission.py`**: Full unitary and phase verification script validating statevectors and ancilla uncomputation.
+3. **`optimized_esop_60.json`**: The 60-cube minimal exact ESOP cover over the 12 coordinate variables.
 4. **`OPTIMIZATION_DASHBOARD.md`**: Complete log of all optimization stages, metrics, and ablation studies.
 
 ---
@@ -28,7 +28,4 @@ python verify_submission.py
 ```
 
 ### 2. Regenerate Circuit from Source
-```bash
-python generate_best_submission.py
-```
-This executes the 60-cube ESOP loader, prefix-trie QMOD generation, intensive Classiq transpilation, and PyTket peephole optimization passes, writing the resulting circuit to `submission.qasm`.
+The full pipeline lives in the notebook `classiq-challenge-baseline (1).ipynb` (in the parent directory). Run it end-to-end to regenerate the circuit: it loads the 60-cube ESOP, builds the literal-scored prefix trie, compiles with Classiq depth optimization, applies INTENSIVE transpilation, and iterates PyTket passes until convergence — writing the result to `submission.qasm`.
